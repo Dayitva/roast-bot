@@ -1,0 +1,12 @@
+# Farcaster and CDP-SDK related dependencies
+farcaster==0.6.0
+cdp-sdk==0.10.1
+
+# Specified dependencies
+web3==7.2.0
+eth-account==0.13.3  # Compatible with web3 and cdp-sdk
+eth-abi==5.1.0       # Required by cdp-sdk
+eth-rlp==2.1.0       # Required by cdp-sdk
+eth-utils==5.0.0     # Required by cdp-sdk
+hexbytes==1.2.1      # Compatible with web3 and cdp-sdk
+parsimonious==0.10.0 # Required by cdp-sdk

@@ -1,8 +1,10 @@
 import json
+import subprocess
 from swarm import Agent
 from cdp import *
 from typing import List, Dict, Any
-import os
+import os, config
+import ai, farcaster_utils
 from openai import OpenAI
 from decimal import Decimal
 from typing import Union
@@ -11,8 +13,8 @@ from web3.exceptions import ContractLogicError
 from cdp.errors import ApiError, UnsupportedAssetError
 
 # Get configuration from environment variables
-API_KEY_NAME = os.environ.get("CDP_API_KEY_NAME")
-PRIVATE_KEY = os.environ.get("CDP_PRIVATE_KEY", "").replace('\\n', '\n')
+API_KEY_NAME = config.API_KEY_NAME
+PRIVATE_KEY = config.PRIVATE_KEY
 
 # Configure CDP with environment variables
 Cdp.configure(API_KEY_NAME, PRIVATE_KEY)
@@ -337,6 +339,34 @@ def register_basename(basename: str, amount: float = 0.002):
         return f"Error registering basename: {str(e)}"
     except Exception as e:
         return f"Unexpected error registering basename: {str(e)}"
+    
+
+def roast_user(username: str):
+    """
+    This function roasts a user on farcaster, give their username
+
+    Args:
+        username (string): farcaster username
+        
+    Returns:
+        type: Description of what is returned
+    """
+    try:
+
+        fid = farcaster_utils.get_fid_by_username(username)
+        user_casts = farcaster_utils.get_user_cast_data(fid)
+
+        cast_data = ", ".join(user_casts)
+
+        standard_prompt = "take the following cast data and roast this person mildly in 250 characters of less"
+
+        ai_roast = ai.get_openai_chat_completion(standard_prompt + cast_data)
+
+        cast = farcaster_utils.post_roast(username, ai_roast)
+        
+        return f"Operation successful: {cast} "
+    except Exception as e:
+        return f"Error in my_new_function: {str(e)}"
 
 
 # Create the Based Agent with all available functions
@@ -353,87 +383,10 @@ based_agent = Agent(
         deploy_nft,
         mint_nft,
         swap_assets,
-        register_basename
+        register_basename, 
+        roast_user
     ],
 )
-
-# add the following import to the top of the file, add the code below it, and add the new functions to the based_agent.functions list
-
-# from twitter_utils import TwitterBot
-
-# # Initialize TwitterBot with your credentials
-# twitter_bot = TwitterBot(
-#     api_key="your_api_key",
-#     api_secret="your_api_secret",
-#     access_token="your_access_token",
-#     access_token_secret="your_access_token_secret"
-# )
-
-# # Add these new functions to your existing functions list
-
-# def post_to_twitter(content: str):
-#     """
-#     Post a message to Twitter.
-#
-#     Args:
-#         content (str): The content to tweet
-#
-#     Returns:
-#         str: Status message about the tweet
-#     """
-#     return twitter_bot.post_tweet(content)
-
-# def check_twitter_mentions():
-#     """
-#     Check recent Twitter mentions.
-#
-#     Returns:
-#         str: Formatted string of recent mentions
-#     """
-#     mentions = twitter_bot.read_mentions()
-#     if not mentions:
-#         return "No recent mentions found"
-
-#     result = "Recent mentions:\n"
-#     for mention in mentions:
-#         if 'error' in mention:
-#             return f"Error checking mentions: {mention['error']}"
-#         result += f"- @{mention['user']}: {mention['text']}\n"
-#     return result
-
-# def reply_to_twitter_mention(tweet_id: str, content: str):
-#     """
-#     Reply to a specific tweet.
-#
-#     Args:
-#         tweet_id (str): ID of the tweet to reply to
-#         content (str): Content of the reply
-#
-#     Returns:
-#         str: Status message about the reply
-#     """
-#     return twitter_bot.reply_to_tweet(tweet_id, content)
-
-# def search_twitter(query: str):
-#     """
-#     Search for tweets matching a query.
-#
-#     Args:
-#         query (str): Search query
-#
-#     Returns:
-#         str: Formatted string of matching tweets
-#     """
-#     tweets = twitter_bot.search_tweets(query)
-#     if not tweets:
-#         return f"No tweets found matching query: {query}"
-
-#     result = f"Tweets matching '{query}':\n"
-#     for tweet in tweets:
-#         if 'error' in tweet:
-#             return f"Error searching tweets: {tweet['error']}"
-#         result += f"- @{tweet['user']}: {tweet['text']}\n"
-#     return result
 
 # ABIs for smart contracts (used in basename registration)
 l2_resolver_abi = [{
@@ -514,38 +467,3 @@ registrar_abi = [{
     "type":
     "function"
 }]
-
-# To add a new function:
-# 1. Define your function above (follow the existing pattern)
-# 2. Add appropriate error handling
-# 3. Add the function to the based_agent's functions list
-# 4. If your function requires new imports or global variables, add them at the top of the file
-# 5. Test your new function thoroughly before deploying
-
-# Example of adding a new function:
-# def my_new_function(param1, param2):
-#     """
-#     Description of what this function does.
-#
-#     Args:
-#         param1 (type): Description of param1
-#         param2 (type): Description of param2
-#
-#     Returns:
-#         type: Description of what is returned
-#     """
-#     try:
-#         # Your function logic here
-#         result = do_something(param1, param2)
-#         return f"Operation successful: {result}"
-#     except Exception as e:
-#         return f"Error in my_new_function: {str(e)}"
-
-# Then add to based_agent.functions:
-# based_agent = Agent(
-#     ...
-#     functions=[
-#         ...
-#         my_new_function,
-#     ],
-# )
