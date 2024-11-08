@@ -17,7 +17,7 @@ def run_task():
         # add logic to check the frame 
 
 
-        time.sleep(2)
+        time.sleep(60)
 
 if __name__ == '__main__':
     app.run(debug=True)

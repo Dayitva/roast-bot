@@ -1,6 +1,5 @@
-import os, config
+import config
 import requests
-import farcaster_utils
 
 
 def get_openai_chat_completion(prompt, temperature=0.7):
@@ -25,15 +24,3 @@ def get_openai_chat_completion(prompt, temperature=0.7):
         response.raise_for_status() 
     return response
 
-
-# fid = farcaster_utils.get_fid_by_username('femi-adebimpe')
-
-# user_casts = farcaster_utils.get_user_cast_data(fid)
-
-# cast_data = ", ".join(user_casts)
-
-# standard_prompt = "take the following cast data and roast this person mildly in 250 characters of less"
-
-# ai_response = get_openai_chat_completion(standard_prompt + cast_data)
-
-# print(ai_response)
