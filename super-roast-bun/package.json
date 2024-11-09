@@ -13,6 +13,7 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.9",
     "@types/bun": "latest",
     "bun": "latest"
   }

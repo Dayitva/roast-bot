@@ -1,17 +1,12 @@
 import { Button, Frog, TextInput, parseEther } from 'frog'
 import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
-// import { neynar } from 'frog/hubs'
-import { handle } from 'frog/next'
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, child } from "firebase/database";
 import fetch from 'node-fetch';
-// import cfa_abi from '../utils/cfa_abi.json';
-// import iseth_abi from '../utils/iseth_abi.json';
-// import { cfa_abi } from './abi.js'
 
 const contractAddress = "0xcfA132E353cB4E398080B9700609bb008eceB125";
-const botAddress = "0x23B125467AE38C20dAE8A2B52D3019a06A48105c";
+const botAddress = "0x327470ee862e4778c9d3864f89a3eec87bbdd1dd";
 const superTokenAddress = "0x143ea239159155b408e71cdbe836e8cfd6766732";
 // const flowRate = 766495000;
 
@@ -136,7 +131,7 @@ app.frame('/', async (c) => {
             whiteSpace: 'pre-wrap',
           }}
         >
-          {`${data.roaster} is paying ${(data.flowrate*(30*24*3600)/10**18).toFixed(3)} ETH per month to currently roast ${data.roastee}. Pay more to roast someone else.\n You can upgrade first if you don't have ETHx.`} 
+          {`${data.roaster} is paying ${(data.flowrate*(30*24*3600)/10**18).toFixed(4)} ETH per month to currently roast ${data.roastee}. Pay more to roast someone else.\n You can upgrade first if you don't have ETHx.`} 
         </div>
       </div>
     ),
@@ -153,7 +148,7 @@ app.transaction('/upgrade', async (c) => {
   // const castId = frameData?.castId;
   // console.log('Roast transaction', castId);
   const data = await readRoastData(1);
-  const upgradeAmount = 1 * (data.flowrate * (30*24*3600) / 10**18);
+  const upgradeAmount = 2 * (data.flowrate * (30*24*3600) / 10**18);
   
   return c.contract({
     abi: iseth_abi,
@@ -166,11 +161,21 @@ app.transaction('/upgrade', async (c) => {
 })
 
 app.transaction('/roast', async (c) => {
-  const { inputText } = c;
+  const { frameData, inputText } = c;
   console.log("Input Text:", inputText);
 
   const data = await readRoastData(1);
-  const newFlowRate = data.flowrate + 766495000;
+  const newFlowRate = data.flowrate + 76649500;
+
+  const fid = frameData?.fid;
+  console.log('Roast transaction', fid);
+  const roaster = await getUsernameFromFID(fid || 1);
+  
+  if (roaster) {
+    await writeRoastData(1, roaster, inputText ?? '', newFlowRate);
+  } else {
+    console.error("Roaster username is null");
+  }
   
   return c.contract({
     abi: cfa_abi,
@@ -186,18 +191,9 @@ app.frame('/finish', async (c) => {
   const { transactionId } = c
   const { frameData, inputText } = c;
   console.log('Finish frame', transactionId, frameData, inputText);
-  const fid = frameData?.fid;
-  console.log('Roast transaction', fid);
-  const roaster = await getUsernameFromFID(fid || 1);
 
   const data = await readRoastData(1);
-  const newFlowRate = data.flowrate + 766495000;
   
-  if (roaster) {
-    await writeRoastData(1, roaster, inputText ?? '', newFlowRate);
-  } else {
-    console.error("Roaster username is null");
-  }
   return c.res({
     image: (
       <div style={{ color: 'white', display: 'flex', fontSize: 60 }}>
