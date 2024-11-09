@@ -7,10 +7,11 @@ def get_roast_bot_address():
     return client.get_custody_address('roast-bot')
     
 def get_user_address_by_username(username):
-    return client.get_custody_address(username)
+    result = client.get_custody_address(username)
+    return result.custody_address
 
-def post_roast(username, roast):
-    response = client.post_cast(text=f'${roast} @{username}')
+def post_roast(username, roast, frame):
+    response = client.post_cast(text=f'${roast} @{username}, {frame}')
     return response
 
 def get_fid_by_username(username):
@@ -21,8 +22,8 @@ def get_fid_by_username(username):
             fid = data[1]
         return fid
     
-def get_user_cast_data(fid):
-    fid = get_fid_by_username('femi-adebimpe')
+def get_user_cast_data(username):
+    fid = get_fid_by_username(username)
     user_casts = client.get_casts(fid)
     
     cast_data = []
@@ -36,7 +37,8 @@ def get_user_cast_data(fid):
 
 
 # fid = get_fid_by_username('femi-adebimpe')
-# user_casts = get_user_cast_data(fid)
+# user_casts = get_user_cast_data('femi-adebimpe')
+# print(user_casts)
 
 # get mention and reply notifications
 

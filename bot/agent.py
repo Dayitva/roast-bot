@@ -21,12 +21,9 @@ def roast_user(username: str):
 
         roast = ai_roast['choices'][0]['message']['content']
         
-        cast = farcaster_utils.post_roast(username, roast)
+        cast = farcaster_utils.post_roast(username, roast, frame)
         
         return f"Operation successful: "
     except Exception as e:
         return f"Error in my_new_function: {str(e)}"
     
-
-
-roast_user('femi-adebimpe')
