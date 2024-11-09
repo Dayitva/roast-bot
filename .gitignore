@@ -2,3 +2,4 @@
 __pycache__
 .venv
 bot/config.py
+/bot/firebase.json
