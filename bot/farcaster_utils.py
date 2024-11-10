@@ -3,6 +3,8 @@ from farcaster import Warpcast
 
 client = Warpcast(mnemonic=config.MNEMONIC)
 
+
+frame = ['https://roast-bot-hds7.onrender.com/api']
 def get_roast_bot_address():
     return client.get_custody_address('roast-bot')
     
@@ -10,8 +12,8 @@ def get_user_address_by_username(username):
     result = client.get_custody_address(username)
     return result.custody_address
 
-def post_roast(username, roast, frame):
-    response = client.post_cast(text=f'${roast} @{username}, {frame}')
+def post_roast(username, roast):
+    response = client.post_cast(text=f'{roast} @{username}', embeds=frame)
     return response
 
 def get_fid_by_username(username):
@@ -36,7 +38,8 @@ def get_user_cast_data(username):
     return cast_data
 
 
-# fid = get_fid_by_username('femi-adebimpe')
+# fid = get_fid_by_username('youssea')
+# print(fid)
 # user_casts = get_user_cast_data('femi-adebimpe')
 # print(user_casts)
 

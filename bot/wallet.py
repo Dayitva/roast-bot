@@ -29,7 +29,8 @@ abi = [
     }
 ]
 
-senderAddress = Web3.to_checksum_address("0x631088Af5A770Bee50FFA7dd5DC18994616DC1fF")
+#senderAddress = Web3.to_checksum_address("0x631088Af5A770Bee50FFA7dd5DC18994616DC1fF")
+senderAddress = Web3.to_checksum_address("0x23B125467AE38C20dAE8A2B52D3019a06A48105c")
 contract_address = Web3.to_checksum_address("0xcfA132E353cB4E398080B9700609bb008eceB125")
 superTokenAddress = Web3.to_checksum_address("0x143ea239159155b408e71cdbe836e8cfd6766732")
 private_key = ""
@@ -40,7 +41,7 @@ contract = web3.eth.contract(address=contract_address, abi=abi)
 nonce = web3.eth.get_transaction_count(account.address)
 txn = contract.functions.deleteFlow(superTokenAddress, senderAddress, account.address, "0x").build_transaction({
     'from': account.address,
-    'gas': 200000,
+    'gas': 2000000,
     'gasPrice': web3.eth.gas_price,
     'nonce': nonce
 })
