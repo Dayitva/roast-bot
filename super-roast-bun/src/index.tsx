@@ -93,6 +93,9 @@ export const app = new Frog({
   // Supply a Hub to enable frame verification.
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
   title: 'Super Roast',
+  headers: {
+    'cache-control': 'public, immutable, no-transform, max-age=0',
+  },
 })
 
 app.frame('/', async (c) => {
